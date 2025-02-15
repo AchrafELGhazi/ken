@@ -1,11 +1,3 @@
-// src/types/index.ts
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-// src/components/shared/Navbar.tsx
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
