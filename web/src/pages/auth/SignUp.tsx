@@ -1,103 +1,66 @@
-import { useState } from "react";
+import { ClientForm } from '@/components/auth/ClientForm';
+import { NGOForm } from '@/components/auth/NGOForm';
+import { useState } from 'react';
+
+type UserType = 'client' | 'ngo';
 
 export const SignUp = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-  });
+  const [userType, setUserType] = useState<UserType | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle sign up logic
+  const handleSubmit = (data: any) => {
+    console.log('Form submitted:', { userType, data });
   };
 
   return (
-    <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
-      <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-        <h2 className='text-center text-3xl font-bold text-gray-900'>
-          Create your account
-        </h2>
-      </div>
-      <div className='mt-8 sm:mx-auto sm:w-full sm:max-w-md'>
-        <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
-          <form onSubmit={handleSubmit} className='space-y-6'>
-            <div>
-              <label
-                htmlFor='name'
-                className='block text-sm font-medium text-gray-700'
+    <div className='min-h-screen bg-gray-50 py-12'>
+      <div className='max-w-4xl mx-auto px-4'>
+        <div className='bg-white shadow-lg rounded-lg p-8'>
+          <h2 className='text-3xl font-bold text-center text-gray-900 mb-8'>
+            Create your account
+          </h2>
+
+          {/* User Type Selection */}
+          <div className='space-y-4 mb-8'>
+            <label className='block text-sm font-medium text-gray-700'>
+              Account Type
+            </label>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <button
+                type='button'
+                onClick={() => setUserType('client')}
+                className={`p-4 border rounded-lg text-left ${
+                  userType === 'client'
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-gray-200'
+                }`}
               >
-                Full Name
-              </label>
-              <input
-                type='text'
-                id='name'
-                value={formData.name}
-                onChange={e =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
-              />
-            </div>
-            <div>
-              <label
-                htmlFor='email'
-                className='block text-sm font-medium text-gray-700'
+                <h3 className='font-medium'>Individual</h3>
+                <p className='text-sm text-gray-500'>
+                  For students, professionals, and individuals seeking
+                  opportunities
+                </p>
+              </button>
+              <button
+                type='button'
+                onClick={() => setUserType('ngo')}
+                className={`p-4 border rounded-lg text-left ${
+                  userType === 'ngo'
+                    ? 'border-indigo-600 bg-indigo-50'
+                    : 'border-gray-200'
+                }`}
               >
-                Email
-              </label>
-              <input
-                type='email'
-                id='email'
-                value={formData.email}
-                onChange={e =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
-              />
+                <h3 className='font-medium'>Organization</h3>
+                <p className='text-sm text-gray-500'>
+                  For institutions, NGOs, and organizations offering
+                  opportunities
+                </p>
+              </button>
             </div>
-            <div>
-              <label
-                htmlFor='password'
-                className='block text-sm font-medium text-gray-700'
-              >
-                Password
-              </label>
-              <input
-                type='password'
-                id='password'
-                value={formData.password}
-                onChange={e =>
-                  setFormData({ ...formData, password: e.target.value })
-                }
-                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
-              />
-            </div>
-            <div>
-              <label
-                htmlFor='confirmPassword'
-                className='block text-sm font-medium text-gray-700'
-              >
-                Confirm Password
-              </label>
-              <input
-                type='password'
-                id='confirmPassword'
-                value={formData.confirmPassword}
-                onChange={e =>
-                  setFormData({ ...formData, confirmPassword: e.target.value })
-                }
-                className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
-              />
-            </div>
-            <button
-              type='submit'
-              className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
-            >
-              Sign Up
-            </button>
-          </form>
+          </div>
+
+          {/* Render appropriate form based on user type */}
+          {userType === 'client' && <ClientForm onSubmit={handleSubmit} />}
+          {userType === 'ngo' && <NGOForm onSubmit={handleSubmit} />}
         </div>
       </div>
     </div>
