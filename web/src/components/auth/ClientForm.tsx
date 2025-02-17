@@ -90,7 +90,7 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
     'Conferences & Networking Events',
   ];
 
-  const availabilityOptions = ['Full-time', 'Part-time', 'Remote', 'Hybrid'];
+  // const availabilityOptions = ['Full-time', 'Part-time', 'Remote', 'Hybrid'];
 
 
 

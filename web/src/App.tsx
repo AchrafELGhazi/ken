@@ -4,6 +4,7 @@ import { SignIn } from './pages/auth/SignIn';
 import { SignUp } from './pages/auth/SignUp';
 import { Navbar } from './components/shared/Navbar';
 import { Home } from './pages/Home';
+import FileUploadForm from './pages/fileupload';
 
 
 const App = () => {
@@ -15,6 +16,7 @@ const App = () => {
           <Route path='/' element={<Home />} />
           <Route path='/signin' element={<SignIn />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/test' element={<FileUploadForm />} />
         </Routes>
       </div>
     </Router>
