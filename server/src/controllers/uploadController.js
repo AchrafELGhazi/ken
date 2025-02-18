@@ -10,7 +10,6 @@ const handleFileUpload = async (req, res) => {
       const file = req.files.file[0];
       const isImage = file.mimetype.startsWith('image/');
 
-      // Set the correct resource_type based on file type
       const resourceType = isImage ? 'image' : 'raw';
 
       const uploadOptions = {
@@ -36,8 +35,8 @@ const handleFileUpload = async (req, res) => {
         ...uploadDoc.toObject(),
       });
 
-      fs.unlinkSync(file.path);    console.log('Saved document:', uploadDoc);
-
+      fs.unlinkSync(file.path);
+      console.log('Saved document:', uploadDoc);
     }
 
     res.status(200).json({
@@ -83,13 +82,11 @@ const deleteUpload = async (req, res) => {
       });
     }
 
-    // Delete from Cloudinary with correct resource type
     const resourceType = upload.fileType.startsWith('image/') ? 'image' : 'raw';
     await cloudinary.uploader.destroy(upload.cloudinaryId, {
       resource_type: resourceType,
     });
 
-    // Delete from MongoDB
     await upload.deleteOne();
 
     res.status(200).json({
