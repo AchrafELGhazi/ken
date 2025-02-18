@@ -8,6 +8,9 @@ import React, {
 import { Trash2, File, Image, Download, Upload } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
+const API_URL = import.meta.env.VITE_API_URL;
+const NODE_ENV = import.meta.env.VITE_NODE_ENV;
+
 interface UploadedFile {
   _id: string;
   fileName: string;
@@ -72,7 +75,7 @@ const FileUploader: React.FC = () => {
 
   const fetchUploads = async (): Promise<void> => {
     try {
-      const response = await fetch('http://localhost:8000/api/uploads');
+      const response = await fetch(`${API_URL}/uploads`);
       if (!response.ok) throw new Error('Failed to fetch uploads');
 
       const data = await response.json();
@@ -150,10 +153,10 @@ const FileUploader: React.FC = () => {
     setError('');
 
     try {
-      const response = await fetch('http://localhost:8000/api/uploads', {
+      const response = await fetch(`${API_URL}/uploads`, {
         method: 'POST',
         body: formData,
-        credentials: 'include',
+        credentials: NODE_ENV === 'development' ? 'include' : 'same-origin',
       });
 
       if (!response.ok) {
@@ -180,9 +183,9 @@ const FileUploader: React.FC = () => {
 
   const handleDelete = async (id: string): Promise<void> => {
     try {
-      const response = await fetch(`http://localhost:8000/api/uploads/${id}`, {
+      const response = await fetch(`${API_URL}/uploads/${id}`, {
         method: 'DELETE',
-        credentials: 'include',
+        credentials: NODE_ENV === 'development' ? 'include' : 'same-origin',
       });
 
       if (!response.ok) {
