@@ -11,11 +11,11 @@ if (process.env.NODE_ENV === 'development') {
   apiRouter.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
 }
 
-// if (process.env.NODE_ENV === 'production') {
-//   apiRouter.use(
-//     cors({ credentials: true, origin: 'https://res-lab.vercel.app' })
-//   );
-// }
+if (process.env.NODE_ENV === 'production') {
+  apiRouter.use(
+    cors({ credentials: true, origin: 'https://res-lab.vercel.app' })
+  );
+}
 
 apiRouter.use(express.json());
 apiRouter.use(cookieParser());

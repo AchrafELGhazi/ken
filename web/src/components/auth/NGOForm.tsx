@@ -73,15 +73,15 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
     'Law & Legal Affairs',
   ];
 
-  const collaborationOptions = [
-    'Research Partnerships',
-    'Student Engagement',
-    'Funding Opportunities',
-    'Knowledge Exchange',
-    'Resource Sharing',
-    'Joint Programs',
-    'Technical Cooperation',
-  ];
+  // const collaborationOptions = [
+  //   'Research Partnerships',
+  //   'Student Engagement',
+  //   'Funding Opportunities',
+  //   'Knowledge Exchange',
+  //   'Resource Sharing',
+  //   'Joint Programs',
+  //   'Technical Cooperation',
+  // ];
 
   return (
     <form onSubmit={handleSubmit} className='space-y-8'>
