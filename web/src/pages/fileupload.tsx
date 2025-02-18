@@ -156,7 +156,7 @@ const FileUploader: React.FC = () => {
       const response = await fetch(`${API_URL}/uploads`, {
         method: 'POST',
         body: formData,
-        credentials: NODE_ENV === 'development' ? 'include' : 'same-origin',
+        credentials: 'include',
       });
 
       if (!response.ok) {
@@ -185,7 +185,7 @@ const FileUploader: React.FC = () => {
     try {
       const response = await fetch(`${API_URL}/uploads/${id}`, {
         method: 'DELETE',
-        credentials: NODE_ENV === 'development' ? 'include' : 'same-origin',
+        credentials: 'include',
       });
 
       if (!response.ok) {
