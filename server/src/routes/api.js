@@ -13,7 +13,7 @@ if (process.env.NODE_ENV === 'development') {
 
 if (process.env.NODE_ENV === 'production') {
   apiRouter.use(
-    cors({ credentials: true, origin: 'https://res-lab.vercel.app' })
+    cors({ credentials: true, origin: 'https://ken-green.vercel.app' })
   );
 }
 
