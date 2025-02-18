@@ -5,7 +5,7 @@ import React, {
   ChangeEvent,
   FormEvent,
 } from 'react';
-import { Trash2, File, Image } from 'lucide-react';
+import { Trash2, File, Image, Download, Upload } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface UploadedFile {
@@ -32,15 +32,14 @@ type AllowedFileTypes =
   | 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
   | 'text/plain';
 
-const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
-
-const FileUpload: React.FC = () => {
+const FileUploader: React.FC = () => {
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<FilePreview | null>(null);
   const [uploads, setUploads] = useState<UploadedFile[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [dragActive, setDragActive] = useState<boolean>(false);
+  const [downloading, setDownloading] = useState<string>('');
 
   useEffect(() => {
     fetchUploads();
@@ -52,10 +51,8 @@ const FileUpload: React.FC = () => {
       return;
     }
 
-    // Create preview for images
     if (file.type.startsWith('image/')) {
       const reader = new FileReader();
-
       reader.onloadend = () => {
         const result = reader.result;
         if (typeof result === 'string') {
@@ -65,12 +62,6 @@ const FileUpload: React.FC = () => {
           });
         }
       };
-
-      reader.onerror = () => {
-        console.error('FileReader error:', reader.error);
-        setError('Failed to generate preview');
-      };
-
       reader.readAsDataURL(file);
     } else {
       setPreview(null);
@@ -94,6 +85,13 @@ const FileUpload: React.FC = () => {
     }
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      validateAndSetFile(selectedFile);
+    }
+  };
+
   const isValidFileType = (fileType: string): fileType is AllowedFileTypes => {
     const allowedTypes = [
       'image/',
@@ -106,13 +104,13 @@ const FileUpload: React.FC = () => {
   };
 
   const validateAndSetFile = (selectedFile: File): void => {
-    // Validate file size
-    if (selectedFile.size > MAX_FILE_SIZE) {
+    const MAX_SIZE = 15 * 1024 * 1024; // 15MB
+
+    if (selectedFile.size > MAX_SIZE) {
       setError('File size must be less than 15MB');
       return;
     }
 
-    // Validate file type
     if (!isValidFileType(selectedFile.type)) {
       setError(
         'Invalid file type. Please upload an image, PDF, DOC, DOCX, or TXT file.'
@@ -124,21 +122,10 @@ const FileUpload: React.FC = () => {
     setError('');
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      validateAndSetFile(selectedFile);
-    }
-  };
-
   const handleDrag = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
+    setDragActive(e.type === 'dragenter' || e.type === 'dragover');
   };
 
   const handleDrop = (e: DragEvent<HTMLDivElement>): void => {
@@ -209,6 +196,32 @@ const FileUpload: React.FC = () => {
     }
   };
 
+  const handleDownload = async (
+    fileUrl: string,
+    fileName: string
+  ): Promise<void> => {
+    try {
+      setDownloading(fileName);
+      const response = await fetch(fileUrl);
+      if (!response.ok) throw new Error('Failed to download file');
+
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    } catch (error) {
+      console.error('Download error:', error);
+      setError('Failed to download file');
+    } finally {
+      setDownloading('');
+    }
+  };
+
   const formatFileSize = (bytes: number): string => {
     const units = ['B', 'KB', 'MB', 'GB'];
     let size = bytes;
@@ -234,7 +247,7 @@ const FileUpload: React.FC = () => {
     <div className='p-6 max-w-4xl mx-auto'>
       <form onSubmit={handleSubmit} className='space-y-6'>
         <div
-          className={`relative border-2 border-dashed rounded-lg ${
+          className={`relative border-2 border-dashed rounded-lg p-8 ${
             dragActive
               ? 'border-blue-400 bg-blue-50'
               : 'border-gray-300 bg-gray-50'
@@ -250,24 +263,13 @@ const FileUpload: React.FC = () => {
             accept='image/*,.pdf,.doc,.docx,.txt'
             className='absolute inset-0 w-full h-full opacity-0 cursor-pointer'
           />
-          <div className='p-8 text-center'>
+
+          <div className='text-center'>
             <div className='mb-4 flex justify-center'>
               {file ? (
                 getFileIcon(file.type)
               ) : (
-                <svg
-                  className='w-8 h-8 text-gray-500'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
-                  />
-                </svg>
+                <Upload className='w-8 h-8 text-gray-500' />
               )}
             </div>
             <p className='text-gray-600 mb-2'>
@@ -317,27 +319,33 @@ const FileUpload: React.FC = () => {
             <div className='flex items-center space-x-4'>
               {getFileIcon(upload.fileType)}
               <div>
-                <a
-                  href={upload.cloudinaryUrl}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  className='text-blue-500 hover:underline font-medium'
-                >
-                  {upload.fileName}
-                </a>
+                <span className='font-medium'>{upload.fileName}</span>
                 <div className='text-sm text-gray-500'>
                   {formatFileSize(upload.size)} •{' '}
                   {new Date(upload.uploadedAt).toLocaleDateString()}
                 </div>
               </div>
             </div>
-            <button
-              onClick={() => handleDelete(upload._id)}
-              className='p-2 text-red-500 hover:text-red-700 transition-colors'
-              aria-label='Delete file'
-            >
-              <Trash2 className='w-5 h-5' />
-            </button>
+
+            <div className='flex items-center space-x-2'>
+              <button
+                onClick={() =>
+                  handleDownload(upload.cloudinaryUrl, upload.fileName)
+                }
+                disabled={downloading === upload.fileName}
+                className='p-2 text-blue-500 hover:text-blue-700 transition-colors disabled:text-gray-400'
+                aria-label='Download file'
+              >
+                <Download className='w-5 h-5' />
+              </button>
+              <button
+                onClick={() => handleDelete(upload._id)}
+                className='p-2 text-red-500 hover:text-red-700 transition-colors'
+                aria-label='Delete file'
+              >
+                <Trash2 className='w-5 h-5' />
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -345,4 +353,4 @@ const FileUpload: React.FC = () => {
   );
 };
 
-export default FileUpload;
+export default FileUploader;

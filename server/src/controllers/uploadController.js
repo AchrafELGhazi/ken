@@ -24,7 +24,6 @@ const handleFileUpload = async (req, res) => {
       );
       console.log('Cloudinary response:', fileResult);
 
-      // Create upload document
       const uploadDoc = await Upload.create({
         fileName: file.originalname,
         fileType: file.mimetype,
@@ -37,7 +36,6 @@ const handleFileUpload = async (req, res) => {
         ...uploadDoc.toObject(),
       });
 
-      // Clean up temporary file
       fs.unlinkSync(file.path);    console.log('Saved document:', uploadDoc);
 
     }
