@@ -2,9 +2,10 @@ import { useState } from 'react';
 
 interface NGOFormProps {
   onSubmit: (data: any) => void;
+  isLoading?: boolean;
 }
 
-export const NGOForm = ({ onSubmit }: NGOFormProps) => {
+export const NGOForm = ({ onSubmit, isLoading }: NGOFormProps) => {
   const [formData, setFormData] = useState({
     // Basic Information
     orgName: '',
@@ -15,6 +16,7 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
     city: '',
     website: '',
     email: '',
+    password: '',
     phone: '',
     socialMedia: {
       linkedin: '',
@@ -72,16 +74,6 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
     'Engineering & Infrastructure',
     'Law & Legal Affairs',
   ];
-
-  // const collaborationOptions = [
-  //   'Research Partnerships',
-  //   'Student Engagement',
-  //   'Funding Opportunities',
-  //   'Knowledge Exchange',
-  //   'Resource Sharing',
-  //   'Joint Programs',
-  //   'Technical Cooperation',
-  // ];
 
   return (
     <form onSubmit={handleSubmit} className='space-y-8'>
@@ -210,7 +202,22 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
               required
             />
           </div>
-
+          <div>
+            <label className='block text-sm font-medium text-gray-700'>
+              Password
+            </label>
+            <input
+              type='password'
+              value={formData.password}
+              onChange={e =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
+              required
+              minLength={6}
+              placeholder='Enter your password'
+            />
+          </div>
           <div>
             <label className='block text-sm font-medium text-gray-700'>
               Phone Number
@@ -353,10 +360,10 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
         </div>
       </div>
 
-  {/* Focus Areas & Mission */}
+      {/* Focus Areas & Mission */}
       <div className='space-y-6'>
         <h3 className='text-xl font-semibold'>Focus Areas & Mission</h3>
-        
+
         {/* Fields of Expertise */}
         <div>
           <label className='block text-sm font-medium text-gray-700'>
@@ -387,7 +394,9 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
             <input
               type='text'
               value={formData.otherExpertise}
-              onChange={e => setFormData({ ...formData, otherExpertise: e.target.value })}
+              onChange={e =>
+                setFormData({ ...formData, otherExpertise: e.target.value })
+              }
               className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
               placeholder='Enter other fields of expertise'
             />
@@ -401,7 +410,9 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
           </label>
           <textarea
             value={formData.missionStatement}
-            onChange={e => setFormData({ ...formData, missionStatement: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, missionStatement: e.target.value })
+            }
             className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-32'
             placeholder='Brief description of the institution mission and purpose'
             required
@@ -430,7 +441,9 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
                 <button
                   type='button'
                   onClick={() => {
-                    const newPrograms = formData.keyPrograms.filter((_, i) => i !== index);
+                    const newPrograms = formData.keyPrograms.filter(
+                      (_, i) => i !== index
+                    );
                     setFormData({ ...formData, keyPrograms: newPrograms });
                   }}
                   className='p-2 text-red-600 hover:text-red-800'
@@ -441,10 +454,12 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
             ))}
             <button
               type='button'
-              onClick={() => setFormData({
-                ...formData,
-                keyPrograms: [...formData.keyPrograms, '']
-              })}
+              onClick={() =>
+                setFormData({
+                  ...formData,
+                  keyPrograms: [...formData.keyPrograms, ''],
+                })
+              }
               className='mt-2 inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
             >
               Add Program
@@ -458,9 +473,15 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
             Collaboration Interests
           </label>
           <div className='mt-2 grid grid-cols-2 md:grid-cols-3 gap-4'>
-            {['Research Partnerships', 'Student Engagement', 'Funding Opportunities', 
-              'Knowledge Exchange', 'Resource Sharing', 'Joint Programs', 
-              'Technical Cooperation'].map(interest => (
+            {[
+              'Research Partnerships',
+              'Student Engagement',
+              'Funding Opportunities',
+              'Knowledge Exchange',
+              'Resource Sharing',
+              'Joint Programs',
+              'Technical Cooperation',
+            ].map(interest => (
               <label key={interest} className='inline-flex items-center'>
                 <input
                   type='checkbox'
@@ -468,8 +489,13 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
                   onChange={e => {
                     const newInterests = e.target.checked
                       ? [...formData.collaborationInterests, interest]
-                      : formData.collaborationInterests.filter(i => i !== interest);
-                    setFormData({ ...formData, collaborationInterests: newInterests });
+                      : formData.collaborationInterests.filter(
+                          i => i !== interest
+                        );
+                    setFormData({
+                      ...formData,
+                      collaborationInterests: newInterests,
+                    });
                   }}
                   className='rounded border-gray-300 text-indigo-600 focus:ring-indigo-500'
                 />
@@ -486,7 +512,9 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
           </label>
           <textarea
             value={formData.fundingPrograms}
-            onChange={e => setFormData({ ...formData, fundingPrograms: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, fundingPrograms: e.target.value })
+            }
             className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-32'
             placeholder='Specify available scholarships, grants, and other funding opportunities'
           />
@@ -563,9 +591,11 @@ export const NGOForm = ({ onSubmit }: NGOFormProps) => {
 
       <button
         type='submit'
-        className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+        disabled={isLoading}
+        className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed'
+        onClick={() => console.log('Button clicked')}
       >
-        Complete Registration
+        {isLoading ? 'Registering...' : 'Complete Registration'}
       </button>
     </form>
   );

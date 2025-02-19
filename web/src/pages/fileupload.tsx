@@ -9,7 +9,7 @@ import { Trash2, File, Image, Download, Upload } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const API_URL = import.meta.env.VITE_API_URL;
-const NODE_ENV = import.meta.env.VITE_NODE_ENV;
+// const NODE_ENV = import.meta.env.VITE_NODE_ENV;
 
 interface UploadedFile {
   _id: string;

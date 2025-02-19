@@ -2,9 +2,10 @@ import { useState } from 'react';
 
 interface ClientFormProps {
   onSubmit: (data: any) => void;
+  isLoading?: boolean;
 }
 
-export const ClientForm = ({ onSubmit }: ClientFormProps) => {
+export const ClientForm = ({ onSubmit,isLoading }: ClientFormProps) => {
   const [formData, setFormData] = useState({
     // Personal Data
     fullName: '',
@@ -14,6 +15,8 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
     country: '',
     city: '',
     email: '',
+    password: '',
+
     phone: '',
     linkedIn: '',
     educationLevel: '',
@@ -39,6 +42,7 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Form submitted with data:', { formData, files });
     onSubmit({ formData, files });
   };
 
@@ -208,6 +212,21 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
               required
             />
           </div>
+          <div>
+            <label className='block text-sm font-medium text-gray-700'>
+              Password
+            </label>
+            <input
+              type='password'
+              value={formData.password}
+              onChange={e =>
+                setFormData({ ...formData, password: e.target.value })
+              }
+              className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
+              required
+              minLength={6}
+            />
+          </div>
 
           <div>
             <label className='block text-sm font-medium text-gray-700'>
@@ -311,7 +330,7 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
         </div>
       </div>
 
-    {/* Interests & Passion */}
+      {/* Interests & Passion */}
       <div className='space-y-6'>
         <h3 className='text-xl font-semibold'>Interests & Passion</h3>
         <div>
@@ -336,14 +355,19 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
               </label>
             ))}
           </div>
-          <div className="mt-2">
+          <div className='mt-2'>
             <label className='block text-sm font-medium text-gray-700'>
               Other (Specify)
             </label>
             <input
               type='text'
               value={formData.otherFieldOfInterest}
-              onChange={e => setFormData({ ...formData, otherFieldOfInterest: e.target.value })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  otherFieldOfInterest: e.target.value,
+                })
+              }
               className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
             />
           </div>
@@ -371,14 +395,19 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
               </label>
             ))}
           </div>
-          <div className="mt-2">
+          <div className='mt-2'>
             <label className='block text-sm font-medium text-gray-700'>
               Other (Specify)
             </label>
             <input
               type='text'
               value={formData.otherOpportunityType}
-              onChange={e => setFormData({ ...formData, otherOpportunityType: e.target.value })}
+              onChange={e =>
+                setFormData({
+                  ...formData,
+                  otherOpportunityType: e.target.value,
+                })
+              }
               className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500'
             />
           </div>
@@ -390,7 +419,9 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
           </label>
           <textarea
             value={formData.careerGoals}
-            onChange={e => setFormData({ ...formData, careerGoals: e.target.value })}
+            onChange={e =>
+              setFormData({ ...formData, careerGoals: e.target.value })
+            }
             className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 h-32'
             placeholder='Describe your career goals and what motivates you...'
             required
@@ -433,9 +464,11 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
             <input
               type='file'
               accept='.pdf,.docx'
-              onChange={e => setFiles({ ...files, cv: e.target.files?.[0] || null })}
+              onChange={e =>
+                setFiles({ ...files, cv: e.target.files?.[0] || null })
+              }
               className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100'
-              required
+              
             />
           </div>
 
@@ -446,7 +479,9 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
             <input
               type='file'
               accept='.pdf'
-              onChange={e => setFiles({ ...files, portfolio: e.target.files?.[0] || null })}
+              onChange={e =>
+                setFiles({ ...files, portfolio: e.target.files?.[0] || null })
+              }
               className='mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100'
             />
           </div>
@@ -487,9 +522,11 @@ export const ClientForm = ({ onSubmit }: ClientFormProps) => {
 
       <button
         type='submit'
-        className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+        disabled={isLoading}
+        className='w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-gray-400 disabled:cursor-not-allowed'
+        onClick={() => console.log('Button clicked')}
       >
-        Complete Registration
+        {isLoading ? 'Registering...' : 'Complete Registration'}
       </button>
     </form>
   );

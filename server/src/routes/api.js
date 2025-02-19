@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const path = require('path');
+const AuthRouter = require('./AuthRoutes');
 
 if (process.env.NODE_ENV === 'development') {
   apiRouter.use(cors({ credentials: true, origin: 'http://localhost:5173' }));
@@ -27,5 +28,6 @@ if (!fs.existsSync(uploadsDir)) {
 }
 
 apiRouter.use('/', require('./uploadRoutes'));
+apiRouter.use('/auth', AuthRouter);
 
 module.exports = apiRouter;
