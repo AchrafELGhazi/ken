@@ -25,7 +25,7 @@ export const SignIn = () => {
       });
 
       const data = await response.json();
-
+      console.log('this is data of user', data)
       if (!response.ok) {
         throw new Error(data.message || 'Login failed');
       }

@@ -10,7 +10,6 @@ const generateToken = id => {
   });
 };
 
-// Helper function for file uploads
 const handleFileUpload = async (file, folder, resource_type = 'raw') => {
   try {
     const result = await cloudinary.uploader.upload(file.path, {
@@ -24,7 +23,6 @@ const handleFileUpload = async (file, folder, resource_type = 'raw') => {
   } catch (error) {
     throw new Error(`Error uploading file: ${error.message}`);
   } finally {
-    // Clean up temp file
     try {
       fs.unlinkSync(file.path);
     } catch (err) {
@@ -33,7 +31,6 @@ const handleFileUpload = async (file, folder, resource_type = 'raw') => {
   }
 };
 
-// Helper function for multiple file uploads
 const handleMultipleUploads = async (files, folder) => {
   const uploads = [];
   for (const file of files) {
@@ -72,7 +69,6 @@ const registerClient = async (req, res) => {
       availability,
     } = req.body;
 
-    // Check if user exists
     const userExists = await ClientUser.findOne({ email });
     if (userExists) {
       return res.status(400).json({
@@ -81,7 +77,6 @@ const registerClient = async (req, res) => {
       });
     }
 
-    // Handle file uploads
     let uploads = {};
 
     try {
@@ -144,16 +139,18 @@ const registerClient = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    const userResponse = {
+      ...user.toObject(),
+      type: 'client',
+    };
+
+    delete userResponse.password;
+
     res.status(201).json({
       success: true,
       message: 'Registration successful.',
       token,
-      user: {
-        _id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        isVerified: user.isVerified,
-      },
+      user: userResponse,
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -188,7 +185,6 @@ const registerNGO = async (req, res) => {
       fundingPrograms,
     } = req.body;
 
-    // Check if user exists in either collection
     const userExists = await Promise.all([
       ClientUser.findOne({ email }),
       NGOUser.findOne({ email }),
@@ -201,7 +197,6 @@ const registerNGO = async (req, res) => {
       });
     }
 
-    // Handle file uploads
     let uploads = {};
 
     try {
@@ -265,17 +260,18 @@ const registerNGO = async (req, res) => {
 
     const token = generateToken(ngo._id);
 
+    const userResponse = {
+      ...ngo.toObject(),
+      type: 'ngo',
+    };
+
+    delete userResponse.password;
+
     res.status(201).json({
       success: true,
       message: 'Registration successful.',
       token,
-      user: {
-        _id: ngo._id,
-        orgName: ngo.orgName,
-        email: ngo.email,
-        isVerified: ngo.isVerified,
-        type: 'ngo',
-      },
+      user: userResponse,
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -286,6 +282,7 @@ const registerNGO = async (req, res) => {
     });
   }
 };
+
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -324,17 +321,20 @@ const login = async (req, res) => {
 
     const token = generateToken(user._id);
 
+    // Send the complete user object, adding the type field
+    const userResponse = {
+      ...user.toObject(),
+      type: userType,
+    };
+
+    // Remove sensitive information
+    delete userResponse.password;
+
     res.status(200).json({
       success: true,
       message: 'Login successful',
       token,
-      user: {
-        _id: user._id,
-        email: user.email,
-        name: userType === 'client' ? user.fullName : user.orgName,
-        type: userType,
-        isVerified: user.isVerified,
-      },
+      user: userResponse,
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -348,7 +348,6 @@ const login = async (req, res) => {
 
 const logout = async (req, res) => {
   try {
-    // Clear the token cookie if you're using cookies
     res.clearCookie('token');
 
     res.status(200).json({

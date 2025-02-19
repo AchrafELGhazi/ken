@@ -8,6 +8,8 @@ import FileUploadForm from './pages/fileupload';
 import { AuthGuard } from './utils/AuthGuard';
 import { NGOGuard } from './utils/NGOGuard';
 import { ClientGuard } from './utils/ClientGuard';
+import Settings from './pages/Settings';
+import { Profile } from './pages/Profile';
 
 
 const App = () => {
@@ -21,8 +23,8 @@ const App = () => {
           <Route path='/signup' element={<SignUp />} />
 
           <Route element={<AuthGuard />}>
-            {/* <Route path='/profile' element={<Profile />} />
-            <Route path='/settings' element={<Settings />} /> */}
+            <Route path='/profile' element={<Profile />} />
+            <Route path='/settings' element={<Settings />} />
           </Route>
 
           <Route element={<NGOGuard />}>
